@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 /**
  * Created by siballa on 29/05/16.
  */
-public class DPData implements Comparator<DPData>, Comparable<DPData> {
+public class DPData implements Comparator<DPData>, Comparable<DPData>, Serializable {
 
     public static final String BANGALORE = "10645";
     public static int instanceCount = 0;
@@ -27,12 +28,6 @@ public class DPData implements Comparator<DPData>, Comparable<DPData> {
     public DPData(Date date) {
         this.date = date;
         hm = new HashMap<String, String>();
-        SimpleDateFormat ft = new SimpleDateFormat("E dd MMM yyyy");
-        String dateStr = ft.format(date);
-        hm.put("Date", dateStr);
-        hm.put("Date1", dateStr);
-        hm.put("Date2", dateStr);
-        //updateSoup(BANGALORE);
     }
 
     public Date getDate() {
@@ -65,8 +60,11 @@ public class DPData implements Comparator<DPData>, Comparable<DPData> {
      * @param locId
      * @return boolean
      */
-    public boolean updateSoup(String locId) {
+    public boolean updateSoup(String locId, boolean forceUpdate) {
 
+        if (hm.size() != 0 && !forceUpdate)
+            return true;
+        System.out.println("Fetching data for " + date + " ... ");
         /* Form the URL */
         SimpleDateFormat dateFmt = new SimpleDateFormat("dd/MM/yyyy");
         String dpURL = "http://www.drikpanchang.com/panchang/day-panchang.html?l="
@@ -108,7 +106,6 @@ public class DPData implements Comparator<DPData>, Comparable<DPData> {
                 String val = cols.get(1).text().replace("\u00a0", "");
 
                 if (!key.isEmpty() && !val.isEmpty()) {
-                    System.out.println(key + "\t: " + val);
                     this.hm.put(key, val);
                 }
             }
@@ -118,7 +115,6 @@ public class DPData implements Comparator<DPData>, Comparable<DPData> {
                 String val = cols.get(3).text().replace("\u00a0", "");
 
                 if (!key.isEmpty() && !val.isEmpty()) {
-                    System.out.println(key + "\t: " + val);
                     this.hm.put(key, val);
                 }
             }
