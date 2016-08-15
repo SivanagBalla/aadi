@@ -26,6 +26,7 @@ import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -105,6 +106,8 @@ public class cDP_table extends AppCompatActivity {
             }
         }
 
+        dpDB.updateDB();
+
         calendar = Calendar.getInstance();
         dpListAdapter = new ListAdapter(this);
 
@@ -182,11 +185,12 @@ public class cDP_table extends AppCompatActivity {
         calendar.clear(Calendar.SECOND);
         calendar.clear(Calendar.MILLISECOND);
 
-
         Button datePicketBtn = (Button) findViewById(R.id.pickDate);
         datePicketBtn.setText(dateFmtr.format(calendar.getTime()));
 
-        new getDPDataTask().execute(calendar);
+        getDPDataTask newTask = new getDPDataTask();
+        newTask.execute(calendar);
+
     }
 
     private int getID(String key) {
@@ -225,6 +229,9 @@ public class cDP_table extends AppCompatActivity {
     private class getDPDataTask extends AsyncTask<Calendar, Void, Boolean> {
 
         ProgressDialog progressDialog;
+        Date prorityDate;
+        boolean updateAll;
+
 
         @Override
         protected void onPreExecute() {
@@ -237,11 +244,9 @@ public class cDP_table extends AppCompatActivity {
         }
 
         protected Boolean doInBackground(Calendar... dates) {
-
-            if (dates.length != 0)
+            if (dates.length != 0 )
                 return dpDB.updateDPData(dates[0].getTime());
-            else
-                return false;
+            return false;
         }
 
         protected void onPostExecute(Boolean result) {

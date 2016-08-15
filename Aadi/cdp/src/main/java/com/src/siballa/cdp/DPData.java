@@ -26,6 +26,7 @@ public class DPData implements Comparator<DPData>, Comparable<DPData>, Serializa
      * @param date
      */
     public DPData(Date date) {
+
         this.date = date;
         hm = new HashMap<String, String>();
     }
@@ -62,6 +63,8 @@ public class DPData implements Comparator<DPData>, Comparable<DPData>, Serializa
      */
     public boolean updateSoup(String locId, boolean forceUpdate) {
 
+        boolean dummy = true;
+
         if (hm.size() != 0 && !forceUpdate)
             return true;
         System.out.println("Fetching data for " + date + " ... ");
@@ -69,6 +72,17 @@ public class DPData implements Comparator<DPData>, Comparable<DPData>, Serializa
         SimpleDateFormat dateFmt = new SimpleDateFormat("dd/MM/yyyy");
         String dpURL = "http://www.drikpanchang.com/panchang/day-panchang.html?l="
                 + locId + "&&date=" + dateFmt.format(this.date);
+
+        if( dummy == true) {
+            hm = new HashMap<String, String>();
+            hm.put("Hindu Sunrise", dateFmt.format(this.date));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
 
         /* Fetch and Parse URL */
         org.jsoup.nodes.Document doc;
